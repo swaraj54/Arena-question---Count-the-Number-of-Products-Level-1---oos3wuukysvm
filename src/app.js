@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-var products   =require("../models/product.js");
+var products = require("../models/product.js");
 
 // Import routes
 
@@ -24,15 +24,32 @@ app.use(express.json());
 
 // Complete this Route which will return the count of number of products in the range/
 
-app.get("/",async function(req,res){
+app.get("/", async function (req, res) {
 
-    var count = 0;
+    const { category, range } = req.query;
+    try {
+        let query = {};
+        // console.log(range)
+        if (category) {
+            query.category = category
+        }
+        if (range) {
 
-    //Write you code here
-    //update count variable 
-
-    res.send(JSON.stringify(count));
-
+            const [minPrice, maxPrice] = range.split('-');
+            // console.log(minPrice, maxPrice,"chec here")
+            if(minPrice && maxPrice){
+                query.price = { $gte: minPrice, $lte: maxPrice }
+            } else if(minPrice){
+                query.price = {$gte : minPrice}
+            }
+        }
+        // console.log(query, "query")
+        // console.log(minPrice,maxPrice,"range")
+        const resFromMongo = await products.find(query).exec();
+        res.json(resFromMongo.length);
+    } catch (error) {
+        return res.send(error)
+    }
 });
 
 module.exports = app;
