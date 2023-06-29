@@ -24,6 +24,10 @@ app.use(express.json());
 
 // Complete this Route which will return the count of number of products in the range/
 
+app.get("/ping", (req, res) => {
+    res.send("Pong")
+})
+
 app.get("/", async function (req, res) {
 
     const { category, range } = req.query;
@@ -37,10 +41,10 @@ app.get("/", async function (req, res) {
 
             const [minPrice, maxPrice] = range.split('-');
             // console.log(minPrice, maxPrice,"chec here")
-            if(minPrice && maxPrice){
+            if (minPrice && maxPrice) {
                 query.price = { $gte: minPrice, $lte: maxPrice }
-            } else if(minPrice){
-                query.price = {$gte : minPrice}
+            } else if (minPrice) {
+                query.price = { $gte: minPrice }
             }
         }
         // console.log(query, "query")
